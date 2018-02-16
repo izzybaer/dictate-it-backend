@@ -146,44 +146,31 @@ authRouter.put('/auth', bearerAuth, jsonParser, (req, res, next) => {
       .catch(next);
 });
 
+authRouter.get('/logout', bearerAuth, (req, res, next) => {
+    let requestInfo = {
+        headers: req.headers,
+        hostname: req.hostname,
+        ip: req.ip,
+        ips: req.ips,
+    }
 
+    console.log('__GET__ /logout logout');
+    util.devLog('full user info: ', req.user);
+    console.log('user info: ', {...req.user._doc, passwordHash: undefined, tokenSeed: undefined, tokenExpire: undefined});
+    console.log('request info: ', requestInfo);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    req.user.logout()
+      .then(() => {
+        res.set({
+            'Strict-Transport-Security': 'max-age: 10000000000; includeSubDomains',
+            'X-Content-Type-Options': 'nosniff',
+            'X-XSS-Protection': '1; mode=block',
+            'X-Frame-Options': 'DENY',
+          })
+          res.clearCookie('X-StT-Token')
+          res.sendStatus(200)
+        })
+        .catch(next);
+})
 
 export default authRouter;
