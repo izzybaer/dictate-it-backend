@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - '8.5'
+services:
+  - mongodb
+env:
+  - CXX=g++-4.8 MONGODB_URI='mongodb://localhost/travis' PORT=6000 NODE_ENV='test' API_URL='http://localhost:6000' CLIENT_URL='http://localhost:8080' CORS_ORIGINS='http://localhost:8080' DEBUG='true'
+sudo: required
+before_script: npm i
+script:
+  - npm test
+  - npm run travis-lint
+notifications:
+  email: false
